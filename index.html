@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Location Verification</title>
+  <style>
+    body {
+      background: #000;
+      color: #0f0;
+      font-family: 'Courier New', monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+    }
+    .message {
+      max-width: 600px;
+    }
+    button {
+      background: #0f0;
+      color: #000;
+      padding: 10px 20px;
+      border: none;
+      margin-top: 20px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    #locationOutput {
+      margin-top: 15px;
+    }
+  </style>
+</head>
+<body>
+  <div class="message">
+    <h2>📍 Location Verification Portal</h2>
+    <p>To proceed, please verify your location by enabling GPS temporarily.</p>
+    <button onclick="getLocation()">Verify Location</button>
+    <div id="locationOutput"></div>
+  </div>
+
+  <script>
+    function getLocation() {
+      const output = document.getElementById("locationOutput");
+
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+            output.innerHTML = `✅ Location captured:<br>🌍 Latitude: ${lat}<br>🌍 Longitude: ${lon}`;
+
+            // Send location to your server (optional - needs backend endpoint)
+            // fetch('https://your-backend-server.com/log', {
+            //   method: 'POST',
+            //   headers: { 'Content-Type': 'application/json' },
+            //   body: JSON.stringify({ latitude: lat, longitude: lon })
+            // });
+          },
+          (error) => {
+            output.innerHTML = `❌ Location access denied or unavailable.`;
+          }
+        );
+      } else {
+        output.innerHTML = `❌ Geolocation is not supported by this browser.`;
+      }
+    }
+  </script>
+</body>
+</html>
